@@ -1,56 +1,76 @@
 import json
 import numpy as np
+import matplotlib.pyplot as plt
 from scipy.spatial import KDTree
 
-def discrete_gradient_method(data, k=20, alpha=0.1, epsilon=0.01, max_iterations=100):
 
-    points = np.array([(x1, x2) for x1, x2, _ in data])
-    values = np.array([fpf for _, _, fpf in data])
-    values = (values - np.min(values)) / (np.max(values) - np.min(values) + 1e-6)  # Normalize to [0,1]
+def discrete_gradient(f, x, h=1e-5):
+    """
+    Computes the discrete gradient approximation for a nonsmooth function.
+    """
+    n = len(x)
+    g = np.zeros(n)
+    for i in range(n):
+        e_i = np.zeros(n)
+        e_i[i] = h
+        f_plus = f(x + e_i)
+        f_minus = f(x - e_i)
+        g[i] = (f_plus - f_minus) / (2 * h)
+    return g
 
-    kdtree = KDTree(points)
 
-    # Randomly initialize starting point
-    idx = np.random.choice(len(points))
-    xk = points[idx]
+def discrete_gradient_descent_knn(f, points, fpf_values, lr=0.1, max_iter=100, tol=1e-6, k=12):
+    """
+    Performs discrete gradient descent on a set of points using k-Nearest Neighbors.
+    """
+    tree = KDTree(points)
+    optimized_points = np.copy(points)
 
-    trajectory = [xk]
-    for iteration in range(max_iterations):
-        # Find k-nearest neighbors
-        distances, indices = kdtree.query(xk, k=k)
-        neighbors = points[indices]
-        neighbor_values = values[indices]
+    for i in range(max_iter):
+        gradients = np.zeros_like(points)
 
-        current_idx = np.argmin(np.linalg.norm(points - xk, axis=1))
-        current_value = values[current_idx]
+        for j, x in enumerate(points):
+            _, idxs = tree.query(x, k=k)
+            knn_points = points[idxs]
+            knn_fpf = fpf_values[idxs]
+            avg_fpf = np.mean(knn_fpf)
+            gradients[j] = discrete_gradient(lambda p: f(p, avg_fpf), x)
 
-        # Compute discrete gradient using weighted average method
-        weights = 1 / (distances ** 2 + 1e-6)  # Avoid division by zero
-        weights /= weights.sum()  # Normalize weights
-
-        grad = np.sum(weights[:, None] * (neighbor_values[:, None] - current_value) * (neighbors - xk), axis=0)
-        grad_magnitude = np.linalg.norm(grad)
-
-        print(f"Iteration {iteration}: xk = {xk}, grad = {grad}, grad_magnitude = {grad_magnitude}, current_value = {current_value}")
-
-        # Stopping criterion
-        if grad_magnitude < epsilon:
-            print("Stopping criterion met: Gradient magnitude too small.")
+        if np.linalg.norm(gradients) < tol:
             break
 
-        # Update step
-        xk = xk - alpha * grad
-        trajectory.append(xk)
+        optimized_points -= lr * gradients
 
-    return trajectory
+    return optimized_points
+
+
+def nonsmooth_function(x, avg_fpf):
+    return np.abs(x[0]) + np.abs(x[1]) + avg_fpf
+
 
 with open('_schwefelFB.json', 'r') as file:
-    data_json = json.load(file)
+    data = json.load(file)
 
-landscape_data = []
-for run in data_json:
-    for individual in run['individualsWithFPF']:
-        landscape_data.append((individual['x1'], individual['x2'], individual['fpfValue']))
+x1, x2, fpfValue = [], [], []
+for entry in data:
+    for individual in entry['individualsWithFPF']:
+        x1.append(individual['x1'])
+        x2.append(individual['x2'])
+        fpfValue.append(individual['fpfValue'])
 
-result_trajectory = discrete_gradient_method(landscape_data)
-print("Final Optimization trajectory:", result_trajectory)
+points = np.array(list(zip(x1, x2)))
+fpf_values = np.array(fpfValue)
+
+# Run Gradient Descent
+opt_points = discrete_gradient_descent_knn(nonsmooth_function, points, fpf_values)
+
+# Visualization
+fig = plt.figure(figsize=(10, 8))
+ax = fig.add_subplot(111, projection='3d')
+ax.scatter(x1, x2, fpfValue, c=fpfValue, cmap='viridis', marker='o', label='Initial')
+ax.scatter(opt_points[:, 0], opt_points[:, 1], fpf_values, c='red', marker='x', label='Optimized')
+ax.set_xlabel('x1')
+ax.set_ylabel('x2')
+ax.set_zlabel('fpfValue')
+ax.legend()
+plt.show()
