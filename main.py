@@ -2,7 +2,7 @@ import json
 import numpy as np
 import matplotlib.pyplot as plt
 
-with open('_h1DB.json', 'r') as file:
+with open('_himmelblauDB.json', 'r') as file:
     data = json.load(file)
 
 x1 = []
@@ -23,6 +23,6 @@ scatter = ax.scatter(x1, x2, fpfValue, c=fpfValue, cmap='viridis', marker='o')
 ax.set_xlabel('x1')
 ax.set_ylabel('x2')
 ax.set_zlabel('fpfValue')
-ax.set_title('H1 Diversity Based; Average 53.78 generations; Average Result: 0.141024')
+ax.set_title('Himmelblau Diversity Based; Average 45.01 generations; Average Result: 0.000017')
 
 plt.show()
