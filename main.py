@@ -2,7 +2,7 @@ import json
 import numpy as np
 import matplotlib.pyplot as plt
 
-with open('_himmelblauDB.json', 'r') as file:
+with open('_schwefelFT.json', 'r') as file:
     data = json.load(file)
 
 x1 = []
@@ -11,9 +11,10 @@ fpfValue = []
 
 for entry in data:
     for individual in entry['individualsWithFPF']:
-        x1.append(individual['x1'])
-        x2.append(individual['x2'])
-        fpfValue.append(individual['fpfValue'])
+        if individual['fpfValue'] != 1.0:  # Exclude fpfValue of 1.0
+            x1.append(individual['x1'])
+            x2.append(individual['x2'])
+            fpfValue.append(individual['fpfValue'])
 
 fig = plt.figure(figsize=(10, 8))
 ax = fig.add_subplot(111, projection='3d')

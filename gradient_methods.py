@@ -48,7 +48,7 @@ def nonsmooth_function(x, avg_fpf):
     return np.abs(x[0]) + np.abs(x[1]) + avg_fpf
 
 
-with open('_schwefelFB.json', 'r') as file:
+with open('_schwefelFT.json', 'r') as file:
     data = json.load(file)
 
 x1, x2, fpfValue = [], [], []
