@@ -1,10 +1,16 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def schwefel(x, y):
-    return 418.9829 * 2 - (x * np.sin(np.sqrt(np.abs(x))) + y * np.sin(np.sqrt(np.abs(y))))
+def schwefel(x1, x2):
+    return 418.9828872724339 * 2 - (x1 * np.sin(np.sqrt(np.abs(x1))) + x2 * np.sin(np.sqrt(np.abs(x2))))
 
-# Definiere den Bereich der Heatmap
+def h1(x1, x2):
+    term1 = np.sin(x1 - x2 / 8) ** 2
+    term2 = np.sin(x2 + x1 / 8) ** 2
+    denominator = np.sqrt((x1 - 8.6998) ** 2 + (x2 - 6.7665) ** 2) + 1
+    return (term1 + term2) / denominator
+
+# Definiere den Bereich der Heatmap, unterschiedlich je nach Funktion
 x_min, x_max = -500, 500
 y_min, y_max = -500, 500
 
@@ -14,10 +20,9 @@ x = np.linspace(x_min, x_max, resolution)
 y = np.linspace(y_min, y_max, resolution)
 X, Y = np.meshgrid(x, y)
 
-# Berechne die Schwefel-2D-Werte
+# Verwende die gewünschte Funktion hier
 Z = schwefel(X, Y)
 
-# Erstelle die Heatmap
 plt.figure(figsize=(8, 6))
 plt.imshow(Z, extent=[x_min, x_max, y_min, y_max], origin='lower', cmap='viridis')
 plt.colorbar(label='Schwefel target value')
