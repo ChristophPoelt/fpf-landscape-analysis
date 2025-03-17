@@ -2,7 +2,7 @@ import json
 import numpy as np
 import matplotlib.pyplot as plt
 
-with open('_H1FixedTarget.json', 'r') as file:
+with open('_schafferFixedTarget.json', 'r') as file:
     data = json.load(file)
 
 x1 = []
@@ -16,6 +16,8 @@ total_generations = []
 final_fitness_values = []
 
 for entry in data:
+    last_fitness_value = None
+
     for individual in entry['individualsWithFPF']:
         if individual['fpfValue'] != 1.0:  # Exclude fpfValue of 1.0
             x1.append(individual['x1'])
@@ -25,10 +27,13 @@ for entry in data:
         total_generations.append(entry['totalGenerations'])
         final_fitness_values.append(entry['finalBestFitness'])
 
-    for gen, best_individual in enumerate(entry['bestIndividualsPerGeneration']):
+    for gen in range(50):
+        if gen < len(entry['bestIndividualsPerGeneration']):
+            last_fitness_value = entry['bestIndividualsPerGeneration'][gen]['targetValue']
         if gen not in generation_fitness:
             generation_fitness[gen] = []
-        generation_fitness[gen].append(best_individual['targetValue'])
+        if last_fitness_value is not None:
+            generation_fitness[gen].append(last_fitness_value)
 
 generations = sorted(generation_fitness.keys())
 avg_fitness = [np.mean(generation_fitness[gen]) for gen in generations]
@@ -36,7 +41,7 @@ std_dev = [np.std(generation_fitness[gen]) for gen in generations]
 
 avg_generations = np.mean(total_generations)
 avg_final_fitness = np.mean(final_fitness_values)
-title_text = f'H1 Fixed Target Value of 0.5; Average {avg_generations:.2f} generations; Average Result: {avg_final_fitness:.6f}; Total Runs: {total_runs}'
+title_text = f'Schaffer Fixed Target Value of 0.1; Average {avg_generations:.2f} generations; Average Result: {avg_final_fitness:.6f}; Total Runs: {total_runs}'
 
 fig = plt.figure(figsize=(10, 8))
 ax = fig.add_subplot(111, projection='3d')

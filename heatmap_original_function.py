@@ -10,9 +10,14 @@ def h1(x1, x2):
     denominator = np.sqrt((x1 - 8.6998) ** 2 + (x2 - 6.7665) ** 2) + 1
     return (term1 + term2) / denominator
 
+def schaffer(x1, x2):
+    term1 = (x1 ** 2 + x2 ** 2) ** 0.25
+    term2 = np.sin(50 * (x1 ** 2 + x2 ** 2) ** 0.10) ** 2
+    return term1 * (term2 + 1.0)
+
 # Definiere den Bereich der Heatmap, unterschiedlich je nach Funktion
-x_min, x_max = -500, 500
-y_min, y_max = -500, 500
+x_min, x_max = -100, 100
+y_min, y_max = -100, 100
 
 # Erstelle ein Gitter von x- und y-Werten
 resolution = 500  # Anzahl der Punkte pro Achse
@@ -21,12 +26,12 @@ y = np.linspace(y_min, y_max, resolution)
 X, Y = np.meshgrid(x, y)
 
 # Verwende die gewünschte Funktion hier
-Z = schwefel(X, Y)
+Z = schaffer(X, Y)
 
 plt.figure(figsize=(8, 6))
 plt.imshow(Z, extent=[x_min, x_max, y_min, y_max], origin='lower', cmap='viridis')
-plt.colorbar(label='Schwefel target value')
+plt.colorbar(label='Schaffer target value')
 plt.xlabel('x1')
 plt.ylabel('x2')
-plt.title('Heatmap of the original Schwefel Function')
+plt.title('Heatmap of the original Schaffer Function')
 plt.show()
