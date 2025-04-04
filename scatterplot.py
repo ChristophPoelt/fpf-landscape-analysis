@@ -2,7 +2,7 @@ import json
 import numpy as np
 import matplotlib.pyplot as plt
 
-with open('_schafferFixedTarget.json', 'r') as file:
+with open('_hpi_schafferFixedTarget.json', 'r') as file:
     data = json.load(file)
 
 x1 = []
@@ -41,7 +41,7 @@ std_dev = [np.std(generation_fitness[gen]) for gen in generations]
 
 avg_generations = np.mean(total_generations)
 avg_final_fitness = np.mean(final_fitness_values)
-title_text = f'Schaffer Fixed Target Value of 0.1; Average {avg_generations:.2f} generations; Average Result: {avg_final_fitness:.6f}; Total Runs: {total_runs}'
+title_text = f'Schaffer Fixed Target; Average {avg_generations:.2f} generations; Average Result: {avg_final_fitness:.6f}; Total Runs: {total_runs}'
 
 fig = plt.figure(figsize=(10, 8))
 ax = fig.add_subplot(111, projection='3d')

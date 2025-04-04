@@ -43,7 +43,7 @@ def compute_gradient_magnitude(X_samples, y_samples, k=12):
 
 
 # Load your data
-json_file = "_schwefelFixedTarget.json"
+json_file = "_hpi_schafferFixedTarget.json"
 X_samples, y_samples = load_json_data(json_file)
 
 # Compute gradient magnitudes

@@ -11,11 +11,15 @@ def h1(x1, x2):
     denominator = np.sqrt((x1 - 8.6998) ** 2 + (x2 - 6.7665) ** 2) + 1
     return (-((term1 + term2) / denominator) + 2)/2
 
+def schaffer(x1, x2):
+    term1 = (x1 ** 2 + x2 ** 2) ** 0.25
+    term2 = np.sin(50 * (x1 ** 2 + x2 ** 2) ** 0.10) ** 2
+    return term1 * (term2 + 1.0)
 
 # Generate random points
 num_points = 25000  # Reduce for visualization purposes
-X_samples = np.random.uniform(-500, 500, (num_points, 2))
-y_samples = np.array([schwefel(x) for x in X_samples])
+X_samples = np.random.uniform(-100, 100, (num_points, 2))
+y_samples = np.array([schaffer(x[0], x[1]) for x in X_samples])
 
 # Build KDTree for nearest neighbor search
 tree = KDTree(X_samples)

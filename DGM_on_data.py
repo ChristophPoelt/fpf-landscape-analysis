@@ -14,6 +14,11 @@ def h1(x1, x2):
     denominator = np.sqrt((x1 - 8.6998) ** 2 + (x2 - 6.7665) ** 2) + 1
     return -((term1 + term2) / denominator) + 2
 
+def schaffer(x1, x2):
+    term1 = (x1 ** 2 + x2 ** 2) ** 0.25
+    term2 = np.sin(50 * (x1 ** 2 + x2 ** 2) ** 0.10) ** 2
+    return term1 * (term2 + 1.0)
+
 # Lade die Daten aus der JSON-Datei
 def load_json_data(json_file):
     with open(json_file, 'r') as f:
@@ -25,12 +30,12 @@ def load_json_data(json_file):
     for entry in data:
         for individual in entry['individualsWithFPF']:
             X_samples.append([individual['x1'], individual['x2']])
-            y_samples.append(individual['fpfValue']*2)
+            y_samples.append(individual['fpfValue']*25)
 
     return np.array(X_samples), np.array(y_samples)
 
 # Diskrete Gradient Methode mit k-NN
-def discrete_gradient_method(starting_point, X_samples, y_samples, k=12, learning_rate=9, max_iters=100, tolerance=0.000000005):
+def discrete_gradient_method(starting_point, X_samples, y_samples, k=12, learning_rate=5, max_iters=100, tolerance=0.0000001):
     tree = KDTree(X_samples)  # KD-Tree zur schnellen k-NN Suche
     x = np.array(starting_point, dtype=np.float64)
     path = [x.copy()]
@@ -71,7 +76,7 @@ def discrete_gradient_method(starting_point, X_samples, y_samples, k=12, learnin
             break
 
     # Berechnung des realen Schwefel-Wertes am Endpunkt
-    final_schwefel_value = h1(x[0], x[1])
+    final_schwefel_value = schaffer(x[0], x[1])
 
     return function_values, step + 1, final_schwefel_value
 
@@ -93,15 +98,15 @@ def main(json_file, num_runs=100):
     avg_steps = np.mean(num_steps)
     std_steps = np.std(num_steps)
 
-    print(f"Durchschnittlicher finaler FPF-Wert: {avg_final_value/2:.2f}")
-    print(f"Durchschnittlicher realer H1-Wert: {avg_final_schwefel:.2f} ± {std_final_schwefel:.2f}")
+    print(f"Durchschnittlicher finaler FPF-Wert: {avg_final_value/25:.2f}")
+    print(f"Durchschnittlicher realer Schaffer-Wert: {avg_final_schwefel:.2f} ± {std_final_schwefel:.2f}")
     print(f"Durchschnittliche Anzahl an Schritten bis zur Konvergenz: {avg_steps:.2f} ± {std_steps:.2f}")
 
     # Visualisierungen
     plt.figure(figsize=(12, 5))
     plt.subplot(1, 2, 1)
     plt.hist(final_schwefel_values, bins=20, edgecolor='black', alpha=0.7)
-    plt.xlabel("DGM results' H1 target value")
+    plt.xlabel("DGM results' Schaffer target value")
     plt.ylabel("Frequency")
     plt.title("Distribution of DGM results")
 
@@ -115,4 +120,4 @@ def main(json_file, num_runs=100):
     plt.show()
 
 
-main("_H1FixedTarget.json")
+main("_hpi_schafferImprovementBased.json")
