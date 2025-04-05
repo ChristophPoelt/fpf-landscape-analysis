@@ -34,13 +34,13 @@ def load_json_data(json_file):
 # X_samples = np.random.uniform(-100, 100, (num_points, 2))
 # y_samples = np.array([schaffer(x[0], x[1]) for x in X_samples])
 
-json_file = "_hpi_schafferFixedTarget.json"
+json_file = "_hpi_schwefelFixedTarget.json"
 X_samples, y_samples = load_json_data(json_file)
 
 # Compute distances to the global best
 # global_best = np.array([8.6998, 6.7665])  # global optimum for h1
-# global_best = np.array([420.96874636, 420.96874636])  # global optimum for schwefel
-global_best = np.array([0.0, 0.0])  # global optimum for schaffer
+global_best = np.array([420.96874636, 420.96874636])  # global optimum for schwefel
+# global_best = np.array([0.0, 0.0])  # global optimum for schaffer
 distances = np.linalg.norm(X_samples - global_best, axis=1)
 
 # Compute Pearson correlation between distances and fitness values

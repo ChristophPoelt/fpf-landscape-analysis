@@ -34,7 +34,7 @@ def load_json_data(json_file):
 # X_samples = np.random.uniform(-100, 100, (num_points, 2))
 # y_samples = np.array([schaffer(x[0], x[1]) for x in X_samples])
 
-json_file = "_hpi_schafferFixedTarget.json"
+json_file = "_hpi_schwefelFixedTarget.json"
 X_samples, y_samples = load_json_data(json_file)
 
 # Compute histogram of fitness values

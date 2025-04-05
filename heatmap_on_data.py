@@ -2,10 +2,10 @@ import json
 import numpy as np
 import matplotlib.pyplot as plt
 
-with open('_hpi_schafferFixedTarget.json', 'r') as file:
+with open('_hpi_schwefelFixedTarget.json', 'r') as file:
     data = json.load(file)
 
-tile_size = 10
+tile_size = 50
 
 x1_values = [ind['x1'] for entry in data for ind in entry['individualsWithFPF']]
 x2_values = [ind['x2'] for entry in data for ind in entry['individualsWithFPF']]
@@ -40,6 +40,6 @@ c = ax.pcolormesh(x1_bins, x2_bins, grid_values.T, cmap='viridis', shading='auto
 plt.colorbar(c, label='Average fpfValue')
 ax.set_xlabel('x1')
 ax.set_ylabel('x2')
-ax.set_title(f'HPI Schaffer Fixed Target FPF Heatmap with Tile Size {2*tile_size}x{2*tile_size}')
+ax.set_title(f'HPI Schwefel Fixed Target FPF Heatmap with Tile Size {2*tile_size}x{2*tile_size}')
 
 plt.show()
